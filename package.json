@@ -1,0 +1,19 @@
+{
+  "name": "styla",
+  "version": "1.0.0",
+  "description": "Simply Typed Lambda Calculus, it has two compilation backends i.e. WASM and Kombis(SKI Calculus DSL) with type checking.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/archanpatkar/styla.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/archanpatkar/styla/issues"
+  },
+  "homepage": "https://github.com/archanpatkar/styla#readme"
+}

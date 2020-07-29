@@ -1,69 +1,96 @@
-const symbols = ["(",")","\\","if","else","then",".","+","-","/","*","->"];
+const symbols = ["(",")","\\",".","+","-","/","*","->"];
 const types = ["int","bool"];
-const keywords = []
-// /(x:int).x
+const keywords = ["if","else","then","true","false"];
 // (\x:int->int.\y.x)(\x:int.x)10 + 10
+const tokens = {
+    "(":"LPAREN",
+    ")":"RPAREN",
+    "\\":"LAM",
+    ".":"BODY",
+    "+":"ADD",
+    "-":"SUB",
+    "*":"MUL",
+    "/":"DIV",
+    "->":"TO",
+    "if":"IF",
+    "else":"ELSE",
+    "then":"THEN"
+}
 
-function empty(str)
-{
-    if(
-        str == "" || str == " " || 
-        str == "\n" || str == "\b" || 
-        str == "\t"
-    ) return true;
+const white = [" ","\n","\b","\t"]
+function isWhite(c) {
+    return white.includes(c);
+}
+
+const digits = ["0","1","2","3","4","5","6","7","8","9"]
+function isNumber(c) {
+    return digits.includes(c);
+}
+
+function isAlphabet(c) {
+    if(c) {
+        const av = c.charCodeAt(0);
+        return av >= "a".charCodeAt(0) && av <= "z".charCodeAt(0) ||
+               av >= "A".charCodeAt(0) && av <= "Z".charCodeAt(0)   
+    }
     return false;
 }
 
+function isBool(s) {
+    return s == "true" || s == "false";
+}
 
+function token(name,value) {
+    return { type:name, value:value }
+}
 
 function tokenize(string)
 {
-
+    const tokens = []
+    console.log("here")
+    console.log(string)
+    let ch;
+    let curr = 0;
+    while(curr < string.length) {
+        console.log("here")
+        ch = string[curr]
+        console.log(curr)
+        console.log(ch)
+        if(isWhite(ch)) {
+            curr++;
+            while(isWhite(ch)) ch = string[curr++];
+        }
+        if(symbols.includes(ch)) {
+            curr++;
+            if(ch == "-") {
+                if(string[curr] == ">") ch += string[curr++]
+                tokens.push(token(tokens[ch],ch))
+            }
+            else {
+                tokens.push(token(tokens[ch],ch))
+            }
+        }
+        else if(isNumber(ch)) {
+            n = ""+ch
+            ch = string[curr++]
+            while(isNumber(ch)) n += (ch = string[curr++])
+            tokens.push(token("LIT",n))
+        }
+        else if(isAlphabet(ch)) {
+            n = ""+ch
+            ch = string[curr++]
+            while(isAlphabet(ch)) n += (ch = string[curr++])
+            if(isBool(n)) tokens.push(token("LIT",n=="true"?true:false))
+            else if(types.includes(n)) tokens.push(token("TYPE",n))
+            else if(keywords.includes(n)) tokens.push(token(tokens[n],n))
+            else tokens.push(token("IDEN",n))
+        }
+        else curr++;
+    }
+    return tokens
 }
-
-
-// function parse(string,values)
-// {
-//     let parsed = [];
-//     for(let s in string)
-//     {
-//         let i = 0;
-//         while(i < string[s].length) 
-//         {
-//             let str = string[s][i++];
-//             if(!symbols.includes(str) && !empty(str))
-//             {
-//                 let temp = "";
-//                 while(!empty(str) && !symbols.includes(str) && i < string[s].length)
-//                 {
-//                     temp += str;
-//                     str = string[s][i++];
-//                 }
-//                 parsed.push(temp);
-//             }
-//             if(!empty(str)) parsed.push(str);
-//         }
-//         if(values[s] != undefined) parsed.push(new value(values[s]));
-//     }
-//     return parsed;
-// }
-
-// let macros = {};
-
-// function ast(parsed,first=true)
-// {
-//     let node = [];
-//     let char = parsed.shift();
-//     while(first?parsed.length != 0:char != ")")
-//     {
-//         if(parsed.length == 0) throw new SyntaxError("Missing `)`");
-//         if(char == "(") node.push(ast(parsed,false));
-//         else node.push(char);
-//         char = parsed.shift();
-//     }
-//     return node;
-// }
-
+let gen = tokenize("\\x. x")
+console.log(gen)
 
 // AST Nodes
 function Lam(param,type,body) {
@@ -163,6 +190,17 @@ class Env {
     }
 }
 
+class Thunk {
+    constructor(exp,env=null) {
+        this.exp = exp;
+        this.scope = env;
+    }
+
+    reduce() {
+
+    }
+}
+
 class Lambda {
     constructor(body,param,env=null,need=false) {
         this.body = body;
@@ -171,11 +209,11 @@ class Lambda {
         this.scope = env;
     }
 
-    execute(actual) {
+    apply(actual,env) {
         // Create a new Env
         let frame = new Env(outer=this.scope);
         if(this.need) frame.create(this.param,actual);
-        else frame.create(this.param,eval(actual,this.env));
+        else frame.create(this.param,eval(actual,env));
         // add param to the frame
         return eval(this.body,frame);
     }

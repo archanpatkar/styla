@@ -27,7 +27,7 @@ function BinOp(op, l, r) {
 }
 
 function UnOp(op,v) {
-    return { node: op, l: l, r: r }
+    return { node: op, val: v }
 }
 
 // Parser
@@ -64,9 +64,9 @@ function parse(tokens) {
                 return Var(token.value);
             },
             led(left) {
-                const right = expression(0);
-                return App(left,right);
-                // expect(null,`'${left.name}' not a binary operator`);
+                // const right = expression(0);
+                // return App(left,right);
+                expect(null,`'${left.name}' not a binary operator`);
             }
         },
         "LIT": {
@@ -169,7 +169,7 @@ function parse(tokens) {
     }
 
     let ops = ["ADD","SUB","DIV","MUL"];
-
+    let not = ["EOF","RPAREN","LAM","TO","DEFT","BODY","THEN","ELSE"];
     function expression(min) {
         let left;
         let token = consume();
@@ -178,20 +178,16 @@ function parse(tokens) {
         token = peek();
         while(ops.includes(token.type) && min < prec[token.type]) {
             token = consume();
-            if(left.node == "var") left = handle["IDEN"].led(left);
             left = handle[token.type].led(left);
             token = peek();
         }
+        // let current = expression(0);
+        while(!not.includes(peek().type)) {
+            left = handle["APPLY"].led(left);
+        }
         return left;
     }
-
-    let current = expression(0);
-    while(peek().type != "EOF") {
-        current = App(current);
-        current.exp2 = expression(0);
-    }
-
-    return current;
+    return expression(0);
 }
 
 module.exports = parse;

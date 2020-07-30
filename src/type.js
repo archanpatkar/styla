@@ -60,8 +60,8 @@ function typecheck(ast) {
                     Array.isArray(t1[0]) &&
                     Array.isArray(t2) &&
                     arrayEquality(t1[0], t2)
-                ) return t2;
-                else if (t1[0] == t2) return t2;
+                ) return t1[1];
+                else if (t1[0] == t2) return t1[1];
                 else throw new Error(`Couldn't match the expected type: ${printType(t1[0])} with type: ${printType(t2)}`);
             }
             throw new Error(`Tried to apply to non-Function type --> ${t1}`)

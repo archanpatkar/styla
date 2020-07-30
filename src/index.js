@@ -30,12 +30,13 @@ rl.on('line', (input) => {
     }
     else {
         try {
-            let tokens = tokenize(input);
+            const tokens = tokenize(input);
             if(log) console.log(tokens);
-            let ast = parse(tokens);
-            if(log) console.log(JSON.stringify(ast,4));
+            const ast = parse(tokens);
+            if(log) console.log(JSON.stringify(ast,undefined,4));
             const type = typecheck(ast)
-            console.log(type)
+            const out = eval(ast);
+            console.log(`${type}: ${out}`);
         }
         catch (e) {
             console.log(e.message)

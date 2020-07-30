@@ -1,3 +1,3 @@
-# <img src="./styla.svg" width="300em" height="30em"></img>
+# <img src="./styla.svg" width="300px" height="30px"></img>
 
 ### Simply Typed Lambda Calculus interpreter.

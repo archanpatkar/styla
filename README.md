@@ -1,7 +1,4 @@
 <div algin="center">
-
-<img src="./styla.png"></img>
-
-### Simply Typed Lambda Calculus interpreter.
-
+<img src="./styla.png" />
+<h3> Simply Typed Lambda Calculus interpreter. </h3>
 </div>

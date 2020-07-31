@@ -17,7 +17,7 @@ token_name.set("if", "IF")
 token_name.set("else", "ELSE")
 token_name.set("then", "THEN")
 
-const white = [" ", "\n", "\b", "\t"]
+const white = [" ", "\n", "\b", "\t", "\r"]
 function isWhite(c) {
     return white.includes(c);
 }

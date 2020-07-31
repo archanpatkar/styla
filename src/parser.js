@@ -1,193 +1,200 @@
 // TDOP/Pratt Parser
 // Based on http://crockford.com/javascript/tdop/tdop.html
+const tokenize = require("./lexer");
 
 // AST Nodes
-function Lam(param, type, body) {
-    return { node: "lambda", param: param, type: type, body: body }
+const Lam = (param, type, body) => ({ node: "lambda", param: param, type: type, body: body });
+const Lit = (type, val) => ({ node: "literal", type: type, val: val });
+const Var = (name) => ({ node: "var", name: name });
+const App = (lam, param) => ({ node: "apply", exp1: lam, exp2: param });
+const Condition = (cond,e1,e2) => ({ node: "condition", cond:cond, exp1: e1, exp2: e2 });
+const BinOp = (op, l, r) => ({ node: op, l: l, r: r });
+const UnOp = (op,v) => ({ node: op, val: v });
+
+const ops = ["ADD","SUB","DIV","MUL","NEG","LPAREN"];
+const not = ["EOF","RPAREN","LAM","TO","DEFT","BODY","THEN","ELSE"];
+
+const handle = {
+    "IDEN": {
+        nud(token) {
+            return Var(token.value);
+        },
+        led(left) {
+            this.expect(null,`'${left.name}' not a binary operator`);
+        }
+    },
+    "LIT": {
+        nud(token) {
+            if (typeof token.value == "number") return Lit("int", token.value);
+            return Lit("bool", token.value);
+        },
+        led(left) {
+            this.expect(null,`'${left.val}' not a binary operator`);
+        }
+    },
+    "LPAREN": {
+        nud() {
+            const exp = this.expression(0);
+            this.expect("RPAREN", "Unmatched paren '('");
+            return exp;
+        },
+        led(left) {
+            this.expect(null,"'(' not a binary operator");
+        }
+    },
+    "MUL": {
+        lbp:3,
+        nud() {
+            this.expect(null,"'*' not a unary operator");
+        },
+        led(left) {
+            const right = this.expression(this.lbp);
+            return BinOp("MUL",left,right);
+        }
+    },
+    "DIV": {
+        lbp:3,
+        nud() {
+            this.expect(null,"'/' not a unary operator");
+        },
+        led(left) {
+            const right = this.expression(this.lbp);
+            return BinOp("DIV",left,right);
+        }
+    },
+    "SUB": {
+        rbp:4,
+        lbp:2,
+        nud() {
+            return UnOp("NEG",this.expression(this.rbp));
+        },
+        led(left) {
+            const right = this.expression(this.lbp);
+            return BinOp("SUB",left,right);
+        }
+    },
+    "ADD": {
+        lbp:2,
+        nud() {
+            this.expect(null,"'+' not a unary operator");
+        },
+        led(left) {
+            const right = this.expression(this.lbp);
+            return BinOp("ADD",left,right);
+        }
+    },
+    "IF": {
+        nud() {
+            const cond = this.expression(0);
+            expect("THEN","Expected keyword 'then'");
+            const e1 = this.expression(0);
+            expect("ELSE","Expected keyword 'else'");
+            const e2 = this.expression(0);
+            return Condition(cond,e1,e2);
+        },
+        led() {
+            expect(null,"'if' is not a unary operator");
+        }
+    },
+    "LAM": {
+        type(after) {
+            let t = this.expect("TYPE",`Expected type after '${after}'`).value;
+            if(this.peek().type == "TO") {
+                this.consume();
+                let t2 = this.type("->");
+                return [t,t2];
+            }
+            else return t;
+        },
+        nud() {
+            const param = this.expression(0);
+            if(param.node != "var") this.expect(null,"Expected an identifier");
+            this.expect("DEFT","Expected ':'");
+            const type = this.type(":");
+            this.expect("BODY","Expected '.'");
+            const body = this.expression(0);
+            return Lam(param.name,type,body);
+        },
+        led() {
+            expect(null,"'\\' is not a unary operator");
+        }
+    },
+    "APPLY": {
+        lbp:5,
+        led(left) {
+            const right = this.expression(this.lbp);
+            return App(left,right);
+        }
+    }
 }
 
-function Lit(type, val) {
-    return { node: "literal", type: type, val: val }
+function multiThis(func,...obj) {
+    let merged = new Proxy({ all: obj }, {
+        set(target,key,value) {
+            let o = undefined;
+            for(let e of target.all) {
+                if(e[key]) {
+                    o = e[key] = value;
+                    break;
+                }
+            }
+            return o;
+        },
+        get(target,key) {
+            let o = undefined;
+            for(let e of target.all) {
+                if(e[key]) {
+                    o = e[key];
+                    break;
+                }
+            }
+            return o;
+        }
+    });
+    return func.bind(merged);
 }
 
-function Var(name) {
-    return { node: "var", name: name }
-}
+class Parser {
+    constructor() {}
 
-function App(lam, param) {
-    return { node: "apply", exp1: lam, exp2: param }
-}
-
-function Condition(cond,e1,e2) {
-    return { node: "condition", cond:cond, exp1: e1, exp2: e2 }
-}
-
-function BinOp(op, l, r) {
-    return { node: op, l: l, r: r }
-}
-
-function UnOp(op,v) {
-    return { node: op, val: v }
-}
-
-// Parser
-function parse(tokens) {
-    function consume() {
-        return tokens.shift();
+    consume() {
+        return this.tokens.shift();
     }
 
-    function peek() {
-        return tokens[0];
+    peek() {
+        return this.tokens[0];
     }
 
-    function expect(next, msg) {
-        if (next && tokens[0].type == next) return consume();
+    expect(next, msg) {
+        if (next && this.peek().type == next)
+            return this.consume();
         throw new Error(msg);
     }
 
-    function eatWhite() {
-        while(peek().type == "WHITE") consume();
-    }
-
-    const prec = {
-        "APP":5,
-        "NEG":4,
-        "MUL":3,
-        "DIV":3,
-        "SUB":2,
-        "ADD":2
-    };
-
-    const handle = {
-        "IDEN": {
-            nud(token) {
-                return Var(token.value);
-            },
-            led(left) {
-                // const right = expression(0);
-                // return App(left,right);
-                expect(null,`'${left.name}' not a binary operator`);
-            }
-        },
-        "LIT": {
-            nud(token) {
-                if (typeof token.value == "number") return Lit("int", token.value);
-                return Lit("bool", token.value);
-            },
-            led(left) {
-                expect(null,`'${left.val}' not a binary operator`);
-            }
-        },
-        "LPAREN": {
-            nud() {
-                const exp = expression(0);
-                expect("RPAREN", "Unmatched paren '('");
-                return exp;
-            },
-            led() {
-                expect(null,"'(' not a binary operator");
-            }
-        },
-        "MUL": {
-            nud() {
-                expect(null,"'*' not a unary operator");
-            },
-            led(left) {
-                const right = expression(prec["MUL"]);
-                return BinOp("MUL",left,right);
-            }
-        },
-        "DIV": {
-            nud() {
-                expect(null,"'/' not a unary operator");
-            },
-            led(left) {
-                const right = expression(prec["DIV"]);
-                return BinOp("DIV",left,right);
-            }
-        },
-        "SUB": {
-            nud() {
-                return UnOp("NEG",expression(prec["NEG"]));
-            },
-            led(left) {
-                const right = expression(prec["SUB"]);
-                return BinOp("SUB",left,right);
-            }
-        },
-        "ADD": {
-            nud() {
-                expect(null,"'+' not a unary operator");
-            },
-            led(left) {
-                const right = expression(prec["ADD"]);
-                return BinOp("ADD",left,right);
-            }
-        },
-        "IF": {
-            nud() {
-                const cond = expression(0);
-                expect("THEN","Expected keyword 'then'");
-                const e1 = expression(0);
-                expect("ELSE","Expected keyword 'else'");
-                const e2 = expression(0);
-                return Condition(cond,e1,e2);
-            },
-            led() {
-                expect(null,"'if' is not a unary operator");
-            }
-        },
-        "LAM": {
-            type(after) {
-                let t = expect("TYPE",`Expected type after '${after}'`).value;
-                if(peek().type == "TO") {
-                    consume();
-                    let t2 = this.type("->");
-                    return [t,t2];
-                }
-                else return t;
-            },
-            nud() {
-                const param = expression(0);
-                if(param.node != "var") expect(null,"Expected an identifier");
-                expect("DEFT","Expected ':'");
-                const type = this.type(":");
-                expect("BODY","Expected '.'");
-                const body = expression(0);
-                return Lam(param.name,type,body);
-            },
-            led() {
-                expect(null,"'\\' is not a unary operator");
-            }
-        },
-        "APPLY": {
-            led(left) {
-                const right = expression(prec["APP"]);
-                return App(left,right);
-            }
-        }
-    }
-
-    let ops = ["ADD","SUB","DIV","MUL"];
-    let not = ["EOF","RPAREN","LAM","TO","DEFT","BODY","THEN","ELSE"];
-    function expression(min) {
+    expression(min) {
         let left;
-        let token = consume();
-        if(token.type == "EOF") expect(null,"Unexpected end")
-        if(handle[token.type]) left = handle[token.type].nud(token);
-        token = peek();
-        while(ops.includes(token.type) && min < prec[token.type]) {
-            token = consume();
-            left = handle[token.type].led(left);
-            token = peek();
+        let token = this.peek();
+        if(token.type == "EOF") this.expect(null,"Unexpected end")
+        if(handle[token.type]) {
+            token = this.consume();
+            left = multiThis(handle[token.type].nud,handle[token.type],this)(token);
         }
-        // let current = expression(0);
-        while(!not.includes(peek().type)) {
-            left = handle["APPLY"].led(left);
+        token = this.peek();
+        while(ops.includes(token.type) && min < handle[token.type].lbp) {
+            token = this.consume();
+            left = multiThis(handle[token.type].led,handle[token.type],this)(left);
+            token = this.peek();
+        }
+        while(!not.includes(this.peek().type) && min < handle["APPLY"].lbp && left.node != "literal") {
+            left = multiThis(handle["APPLY"].led,handle[token.type],this)(left);
         }
         return left;
     }
-    return expression(0);
+
+    parse(str) {
+        this.tokens = tokenize(str);
+        return this.expression(0);
+    }   
 }
 
-module.exports = parse;
+module.exports = Parser;

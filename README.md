@@ -22,13 +22,16 @@ The interpreter implements all the major application evaluation strategies i.e.
 1. [**`call by value`**](https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_value) (This is the approach adopted by most languages) 
 2. [**`call by name`**](https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_name) (a lazy/non-strict approach)  
 3. [**`call by need`**](https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_need) (a more optimized lazy/non-strict approach then `call by name`). 
+<br>
 More on how to change the evaluatation strategy type `help` in **REPL**.
 
+Styla is because [stlc](https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus) is strongly normalizing so it cannot encode recursion i.e. fix point combinators(Y combinator etc) and therefore is a decidable problem i.e. it always halts and normalizes to a value. The language is not [turing complete](https://en.wikipedia.org/wiki/Turing_completeness) because for being turing complete it has to be capable of simulating the [universal turing machine](https://en.wikipedia.org/wiki/Universal_Turing_machine) for which the halting problem is undecidable.
 
 ## Install
 Clone the repo and `cd` into the repo folder and then execute -
-
 #### `npm install -g`
+After it succesfully installs globally then type(to open the **REPL**) -
+#### `styla`
 
 ## REPL
 

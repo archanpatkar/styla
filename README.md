@@ -10,3 +10,5 @@ Styla is a small programming language/interpreter based on [simply typed lambda 
 ## REPL
 
 <img src="./static/repl.png" />
+
+<img src="./static/repl2.png" />

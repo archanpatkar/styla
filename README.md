@@ -26,7 +26,7 @@ Lambda application is done by writing the parameters next to the lambda abstract
 
 `Note`: Application is left associative and has the highest precedence so this is **`(\y: bool. \z: bool. y) true false`** is interpreted as follows **`(((\y: bool. \z: bool. y) true) false)`**. 
 
-The interpreter implements all the major application evaluation strategies i.e. 
+The interpreter implements all the relevant application evaluation strategies i.e. 
 1. [**`call by value`**](https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_value) (This is the approach adopted by most languages) 
 2. [**`call by name`**](https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_name) (a lazy/non-strict approach)  
 3. [**`call by need`**](https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_need) (a more optimized lazy/non-strict approach then `call by name`). 

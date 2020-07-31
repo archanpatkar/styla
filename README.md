@@ -10,6 +10,10 @@ Styla is a small programming language/interpreter based on [simply typed lambda 
 
 **`(\z: bool. if z then false else true)`**. 
 
+**`(\x: int->bool. x) (\y:int. false) 10`**
+
+**`(\x:int->int. x 10)(\x:int. x)`** etc...
+
 Lambda application is done by writing the parameters next to the lambda abstraction which should be covered in parens for disambiguation-
 
 **`(\x: int. x + 5) 10`**,  

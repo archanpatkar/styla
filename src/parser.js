@@ -174,7 +174,7 @@ class Parser {
     expression(min) {
         let left;
         let token = this.peek();
-        if(token.type == "EOF") this.expect(null,"Unexpected end")
+        if(token.type == "EOF") this.expect(null,"Unexpected end");
         if(handlers[token.type]) {
             token = this.consume();
             left = multiThis(handlers[token.type].nud,handlers[token.type],this)(token);

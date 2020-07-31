@@ -4,7 +4,7 @@
 </div>
 <hr></hr>
 
-Styla is a small programming language/interpreter based on [simply typed lambda calculus](https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus) with extensions. It is fundamentally an implementation of a type system over the original untyped lambda calculus (styla uses Church-style typing semantics i.e. it needs explicit type annotations). Styla provides three types - **`int`**, **`bool`** and **`->`**(function type) and implements static type checking, the language also supports **`if`** expressions and integer arithmetic operations such as -  **`+`**, **`-`** etc. The basic lambda abstraction is written in *Haskell* inspired syntax - 
+Styla is a small programming language/interpreter based on [simply typed lambda calculus](https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus) with extensions. It is fundamentally an implementation of a type system over the original untyped lambda calculus (styla uses Church-style typing semantics i.e. it needs explicit type annotations). Styla provides three types: **`int`**, **`bool`** and **`->`**(function type) and implements static type checking, the language also supports **`if`** expressions and integer arithmetic operations such as:  **`+`**, **`-`** etc. The basic lambda abstraction is written in *Haskell* inspired syntax - 
 
 **`(\x: int. x + 5)`**,
 

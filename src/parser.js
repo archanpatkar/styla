@@ -14,7 +14,7 @@ const UnOp = (op,v) => ({ node: op, val: v });
 const ops = ["ADD","SUB","DIV","MUL","NEG","LPAREN"];
 const not = ["EOF","RPAREN","LAM","TO","DEFT","BODY","THEN","ELSE"];
 
-const handle = {
+const handlers = {
     "IDEN": {
         nud(token) {
             return Var(token.value);
@@ -175,18 +175,18 @@ class Parser {
         let left;
         let token = this.peek();
         if(token.type == "EOF") this.expect(null,"Unexpected end")
-        if(handle[token.type]) {
+        if(handlers[token.type]) {
             token = this.consume();
-            left = multiThis(handle[token.type].nud,handle[token.type],this)(token);
+            left = multiThis(handlers[token.type].nud,handlers[token.type],this)(token);
         }
         token = this.peek();
-        while(ops.includes(token.type) && min < handle[token.type].lbp) {
+        while(ops.includes(token.type) && min < handlers[token.type].lbp) {
             token = this.consume();
-            left = multiThis(handle[token.type].led,handle[token.type],this)(left);
+            left = multiThis(handlers[token.type].led,handlers[token.type],this)(left);
             token = this.peek();
         }
-        while(!not.includes(this.peek().type) && min < handle["APPLY"].lbp && left.node != "literal") {
-            left = multiThis(handle["APPLY"].led,handle[token.type],this)(left);
+        while(!not.includes(this.peek().type) && min < handlers["APPLY"].lbp && left.node != "literal") {
+            left = multiThis(handlers["APPLY"].led,handlers[token.type],this)(left);
         }
         return left;
     }

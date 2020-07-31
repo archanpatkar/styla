@@ -14,11 +14,13 @@ Styla is a small programming language/interpreter based on [simply typed lambda 
 
 **`(\x:int->int. x 10)(\x:int. x)`** etc.
 
-Lambda application is done by writing the parameters next to the lambda abstraction which should be covered in parens for disambiguation-
+Lambda application is done by writing the parameters next to the lambda abstraction which should be covered in parens for disambiguation (application inside the lambda body parens are not needed but, for delineating lambda body from parameters outside parens are needed) -
 
 **`(\x: int. x + 5) 10`**,  
 
 **`(\y: bool. \z: bool. y) true false`** 
+
+**`(\a: int->int. a 10 * 3)(\b:int. b - 3)`** 
 
 **`(\y:bool. if y then (\x: int. x + 5) 10 else 20)`** etc. 
 

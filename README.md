@@ -4,7 +4,7 @@
 </div>
 <hr></hr>
 
-Styla is a small programming language/interpreter based on [simply typed lambda calculus](https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus) with extensions. It is fundamentally an implementation of a type system over the original untyped lambda calculus (styla uses Church-style typing semantics). Styla provides three types - **`int`**, **`bool`** and **`->`**(function type) and implements static type checking, the language also supports **`if`** expressions and integer operations such as -  **`+`**, **`-`** etc. The basic lambda abstraction is written in *Haskell* style syntax - 
+Styla is a small programming language/interpreter based on [simply typed lambda calculus](https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus) with extensions. It is fundamentally an implementation of a type system over the original untyped lambda calculus (styla uses Church-style typing semantics i.e. it needs explicit type annotations). Styla provides three types - **`int`**, **`bool`** and **`->`**(function type) and implements static type checking, the language also supports **`if`** expressions and integer arithmetic operations such as -  **`+`**, **`-`** etc. The basic lambda abstraction is written in *Haskell* inspired syntax - 
 
 **`(\x: int. x + 5)`**,
 
@@ -33,7 +33,7 @@ The interpreter implements all the major application evaluation strategies i.e.
 
 More on how to change the evaluatation strategy type `help` in **REPL**.
 
-Styla, because the [stlc](https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus) is strongly normalizing it cannot encode recursion within the calculus i.e. fix point combinators(Y combinator etc) and therefore is a decidable problem i.e. it always halts and normalizes to a value. The language is not [turing complete](https://en.wikipedia.org/wiki/Turing_completeness) because for being turing complete it has to be capable of simulating the [universal turing machine](https://en.wikipedia.org/wiki/Universal_Turing_machine) for which the halting problem is undecidable. Many of the church encodings are expressible in the language and you can try them out as exercises for reference you can use this [repo](https://github.com/archanpatkar/ChurchEncodings) in this repo I've implemented the encodings in Python which you can translate to Styla.
+Styla, because the [stlc](https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus) is strongly normalizing it cannot encode recursion within the calculus i.e. fix point combinators(Y combinator etc) and therefore is a decidable problem, it always halts and normalizes to a value. The language is not [turing complete](https://en.wikipedia.org/wiki/Turing_completeness) because for being turing complete it has to be capable of simulating the [universal turing machine](https://en.wikipedia.org/wiki/Universal_Turing_machine) for which the halting problem is undecidable. Many of the church encodings are expressible in the language and you can try them out as exercises for reference you can use this [repo](https://github.com/archanpatkar/ChurchEncodings) in this repo I've implemented the encodings in Python which you can translate to Styla.
 
 ## Install
 Clone the repo and `cd` into the repo folder and then execute -

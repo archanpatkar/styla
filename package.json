@@ -1,7 +1,7 @@
 {
   "name": "styla",
-  "version": "1.0.0",
-  "description": "Simply Typed Lambda Calculus, it has two compilation backends i.e. WASM and Kombis(SKI Calculus DSL) with type checking.",
+  "version": "0.0.1",
+  "description": "Simply Typed Lambda Calculus interpreter",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,8 +10,11 @@
     "type": "git",
     "url": "git+https://github.com/archanpatkar/styla.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Archan Patkar",
+  "license": "MIT",
+  "bin": {
+    "styla": "src/index.js"
+  },
   "bugs": {
     "url": "https://github.com/archanpatkar/styla/issues"
   },

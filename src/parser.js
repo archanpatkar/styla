@@ -12,7 +12,7 @@ const BinOp = (op, l, r) => ({ node: op, l: l, r: r });
 const UnOp = (op,v) => ({ node: op, val: v });
 
 const ops = ["ADD","SUB","DIV","MUL","NEG","LPAREN"];
-const not = ["EOF","RPAREN","LAM","TO","DEFT","BODY","THEN","ELSE"];
+const not = ["EOF","RPAREN","TO","DEFT","BODY","THEN","ELSE"];
 
 const handlers = {
     "IDEN": {
@@ -86,14 +86,14 @@ const handlers = {
     "IF": {
         nud() {
             const cond = this.expression(0);
-            expect("THEN","Expected keyword 'then'");
+            this.expect("THEN","Expected keyword 'then'");
             const e1 = this.expression(0);
-            expect("ELSE","Expected keyword 'else'");
+            this.expect("ELSE","Expected keyword 'else'");
             const e2 = this.expression(0);
             return Condition(cond,e1,e2);
         },
         led() {
-            expect(null,"'if' is not a unary operator");
+            this.expect(null,"'if' is not a unary operator");
         }
     },
     "LAM": {
@@ -171,11 +171,11 @@ class Parser {
         throw new Error(msg);
     }
 
-    expression(min) {
-        let left;
+    expression(min,pleft) {
+        let left = pleft;
         let token = this.peek();
         if(token.type == "EOF") this.expect(null,"Unexpected end");
-        if(handlers[token.type]) {
+        if(handlers[token.type] && !left) {
             token = this.consume();
             left = multiThis(handlers[token.type].nud,handlers[token.type],this)(token);
         }
@@ -187,6 +187,7 @@ class Parser {
         }
         while(!not.includes(this.peek().type) && min < handlers["APPLY"].lbp && left.node != "literal") {
             left = multiThis(handlers["APPLY"].led,handlers[token.type],this)(left);
+            if(ops.includes(this.peek().type)) left = this.expression(0,left);
         }
         return left;
     }

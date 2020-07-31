@@ -52,14 +52,12 @@ function tokenize(string) {
         ch = string[curr]
         if (isWhite(ch)) curr++;
         else if (symbols.includes(ch)) {
+            curr++;
             if (ch == "-") {
-                if (string[curr + 1] == ">") ch += string[++curr]
+                if (string[curr] == ">") ch += string[curr++]
                 tokens.push(token(token_name.get(ch), ch))
             }
-            else {
-                curr++;
-                tokens.push(token(token_name.get(ch), ch));
-            }
+            else tokens.push(token(token_name.get(ch), ch));
         }
         else if (isNumber(ch)) {
             n = "" + ch

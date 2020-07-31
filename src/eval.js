@@ -118,9 +118,9 @@ class Interpreter {
             return new Lambda(ast.body, ast.param, env, this);
         }
         else if (ast.node == "apply") {
-            const lam = this.ieval(ast.exp1);
+            const lam = this.ieval(ast.exp1,env);
             let out;
-            if(this.mode == value) out = lam.apply(this.ieval(ast.exp2));
+            if(this.mode == value) out = lam.apply(this.ieval(ast.exp2,env));
             else out = lam.apply(new Thunk(ast.exp2,env,this));
             return out;
         }
@@ -132,7 +132,7 @@ class Interpreter {
             return this.ieval(ast.l, env) * this.ieval(ast.r, env);
         else if (ast.node == "DIV") 
             return this.ieval(ast.l, env) / this.ieval(ast.r, env);
-        else if (ast.node == "NEG") return -this.ieval(ast.val);
+        else if (ast.node == "NEG") return -this.ieval(ast.val,env);
     }    
 
     evaluate(str) {

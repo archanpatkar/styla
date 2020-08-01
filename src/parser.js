@@ -93,7 +93,7 @@ const handlers = {
             return Condition(cond,e1,e2);
         },
         led() {
-            this.expect(null,"'if' is not a unary operator");
+            this.expect(null,"'if' is not a binary operator");
         }
     },
     "LAM": {
@@ -116,7 +116,7 @@ const handlers = {
             return Lam(param.name,type,body);
         },
         led() {
-            expect(null,"'\\' is not a unary operator");
+            expect(null,"'\\' is not a binary operator");
         }
     },
     "APPLY": {
@@ -195,7 +195,7 @@ class Parser {
     parse(str) {
         this.tokens = tokenize(str);
         return this.expression(0);
-    }   
+    }
 }
 
 module.exports = Parser;

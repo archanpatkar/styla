@@ -32,6 +32,8 @@ rl.on('line', (input) => {
     else if(input == "clear") console.clear();
     else if(input == "exit") {
         rl.close();
+        console.log("");
+        console.log("Goodbye!");
         return;
     }
     else if(input.startsWith("mode")) {

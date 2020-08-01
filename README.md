@@ -6,9 +6,9 @@
 
 Styla is a small programming language/interpreter based on [simply typed lambda calculus](https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus) with extensions. It is fundamentally an implementation of a type system over the original untyped lambda calculus (styla uses Church-style typing semantics i.e. it needs explicit type annotations). Styla provides three types: **`int`**, **`bool`** and **`->`**(function type) and implements static type checking, the language also supports **`if`** expressions and integer arithmetic operations such as:  **`+`**, **`-`** etc. The basic lambda abstraction is written in *Haskell* inspired syntax - 
 
-**`(\x: int. x + 5)`**,
+**`(\x: int. x + 5)`**
 
-**`(\z: bool. if z then false else true)`**. 
+**`(\z: bool. if z then false else true)`**
 
 **`(\x: int->bool. x) (\y:int. false) 10`**
 
@@ -16,7 +16,7 @@ Styla is a small programming language/interpreter based on [simply typed lambda 
 
 Lambda application is done by writing the parameters next to the lambda abstraction which should be covered in parens for disambiguation (application inside the lambda body parens are not needed but, for delineating lambda body from parameters outside parens are needed) -
 
-**`(\x: int. x + 5) 10`**,  
+**`(\x: int. x + 5) 10`**
 
 **`(\y: bool. \z: bool. y) true false`** 
 

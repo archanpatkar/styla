@@ -35,6 +35,8 @@ More on how to change the evaluatation strategy type `help` in **REPL**.
 
 Styla, because the [stlc](https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus) is strongly normalizing it cannot encode recursion within the calculus i.e. fix point combinators(Y combinator etc) and therefore is a decidable problem, it always halts and normalizes to a value. The language is not [turing complete](https://en.wikipedia.org/wiki/Turing_completeness) because for being turing complete it has to be capable of simulating the [universal turing machine](https://en.wikipedia.org/wiki/Universal_Turing_machine) for which the halting problem is undecidable. Many of the church encodings are expressible in the language and you can try them out as exercises for reference you can use this [repo](https://github.com/archanpatkar/ChurchEncodings) in this repo I've implemented the encodings in Python which you can translate to Styla.
 
+`P.S.`: Styla can also be transpiled to Javascript. 
+
 ## Install
 Clone the repo and `cd` into the repo folder and then execute -
 #### `npm install -g`

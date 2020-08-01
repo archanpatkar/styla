@@ -38,7 +38,7 @@ Styla, because the [stlc](https://en.wikipedia.org/wiki/Simply_typed_lambda_calc
 ## Install
 Clone the repo and `cd` into the repo folder and then execute -
 #### `npm install -g`
-After it succesfully installs globally then type(to open the **REPL**) -
+After it successfully installs then type(to open the **REPL**) -
 #### `styla`
 
 ## REPL

@@ -58,6 +58,11 @@ class TypeChecker {
             if (t1 != "int" || t2 != "int") notType("int","for operands");
             return t1;
         }
+        if(ast.node == "NEG") {
+            const t1 = this.check(ast.val);
+            if (t1 != "int") notType("int","for using unary '-' op");
+            return t1;
+        }
         if (ast.node == "condition") {
             const cond = this.check(ast.cond)
             if (cond != "bool") notType("bool","for 'if' condition");

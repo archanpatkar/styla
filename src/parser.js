@@ -11,7 +11,7 @@ const Condition = (cond,e1,e2) => ({ node: "condition", cond:cond, exp1: e1, exp
 const BinOp = (op, l, r) => ({ node: op, l: l, r: r });
 const UnOp = (op,v) => ({ node: op, val: v });
 
-const ops = ["ADD","SUB","DIV","MUL","NEG","LPAREN"];
+const ops = ["ADD","SUB","DIV","MUL","NEG"];
 const not = ["EOF","RPAREN","TO","DEFT","BODY","THEN","ELSE"];
 
 const handlers = {
@@ -185,7 +185,7 @@ class Parser {
             left = multiThis(handlers[token.type].led,handlers[token.type],this)(left);
             token = this.peek();
         }
-        while(!not.includes(this.peek().type) && min < handlers["APPLY"].lbp && left.node != "literal") {
+        while(!not.includes(this.peek().type) && min < handlers["APPLY"].lbp) {
             left = multiThis(handlers["APPLY"].led,handlers[token.type],this)(left);
             if(ops.includes(this.peek().type)) left = this.expression(0,left);
         }

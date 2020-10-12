@@ -8,14 +8,13 @@ const ops = ["ADD", "SUB", "DIV", "MUL"]
 
 // Utils
 function arrayEquality(a1, a2) {
+    if(a1.length != a2.length) return false;
     let isEqual = false;
-    for (let e1 of a1) {
-        for (let e2 of a2) {
-            if (Array.isArray(e1) && Array.isArray(e2)) arrayEquality(e1, e2);
-            else if (e1 == e2) isEqual = true;
-            else isEqual = false;
-        }
-    }
+    for(let i of a1) {
+        if(a1[i] == a2[i]) isEqual = true;
+        else if(Array.isArray(a1[i]) && Array.isArray(a2[i])) isEqual = arrayEquality(a1[i],a2[i]);
+        else isEqual = false;
+    } 
     return isEqual;
 }
 const printType = (type) => Array.isArray(type) ? `(${printType(type[0])}->${printType(type[1])})` : type;

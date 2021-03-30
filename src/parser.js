@@ -180,14 +180,16 @@ class Parser {
             left = multiThis(handlers[token.type].nud,handlers[token.type],this)(token);
         }
         token = this.peek();
-        while(ops.includes(token.type) && min < handlers[token.type].lbp) {
+        while(ops.includes(token.type) && min <= handlers[token.type].lbp && token.value != 0) {
             token = this.consume();
             left = multiThis(handlers[token.type].led,handlers[token.type],this)(left);
             token = this.peek();
         }
-        while(!not.includes(this.peek().type) && min < handlers["APPLY"].lbp) {
-            left = multiThis(handlers["APPLY"].led,handlers[token.type],this)(left);
-            if(ops.includes(this.peek().type)) left = this.expression(0,left);
+        token = this.peek();
+        while(!not.includes(token.type) && !ops.includes(token.type) && min < handlers["APPLY"].lbp && token.value != 0) {
+            left = multiThis(handlers["APPLY"].led,handlers["APPLY"],this)(left);
+            token = this.peek();
+            if(ops.includes(token.type)) left = this.expression(0,left);
         }
         return left;
     }
